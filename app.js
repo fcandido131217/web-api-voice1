@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         window.close(); 
                         console.log("Se detectó 'cerrar una pestaña'.");
                         break;
+                    case 'cerrar el navegador':
+                        window.close(); 
+                        console.log("Se detectó 'cerrar el navegador'.");
+                        break;
                 
                 }
             }
