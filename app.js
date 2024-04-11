@@ -1,7 +1,6 @@
 const controltexto = document.getElementById('controltexto');
 
 document.addEventListener('DOMContentLoaded', function () {
-    const startBtn = document.getElementById('startBtn');
     const listeningText = document.getElementById('listeningText');
     const resultDiv = document.getElementById('result');
 
@@ -40,11 +39,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         window.close(); 
                         console.log("Se detectó 'cerrar una pestaña'.");
                         break;
+                
                     case 'cerrar el navegador':
                         window.close(); 
                         console.log("Se detectó 'cerrar el navegador'.");
                         break;
-                
                 }
             }
         }
@@ -59,11 +58,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     recognition.onend = function () {
         listeningText.innerHTML = 'Fin de la escucha';
+        recognition.start(); // Reiniciar el reconocimiento después de que termine
     };
 
-    startBtn.addEventListener('click', function () {
-        recognition.start();
-    });
+    // Iniciar la escucha directamente cuando se cargue la página
+    recognition.start();
 
     
     function enviarFraseAFirebase(frase) {
@@ -101,5 +100,3 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 });
-
-
