@@ -1,5 +1,3 @@
-const controltexto = document.getElementById('controltexto');
-
 document.addEventListener('DOMContentLoaded', function () {
     const listeningText = document.getElementById('listeningText');
     const resultDiv = document.getElementById('result');
@@ -12,43 +10,35 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     recognition.onresult = function (event) {
-        const transcript = event.results[0][0].transcript.toLowerCase(); 
-        const keywords = ['abrir una pestaña', 'ir a una página', 'modificar el tamaño de la ventana', 'cerrar una pestaña', 'cerrar el navegador']; // Array de palabras clave
+        const transcript = event.results[0][0].transcript.toLowerCase();
+        const keywords = ['abrir una pestaña', 'ir a una página', 'ir a youtube', 'cerrar pestaña']; // Array de palabras clave
 
         resultDiv.innerHTML = `<strong>Resultado:</strong> ${transcript}`;
 
         for (let i = 0; i < keywords.length; i++) {
             if (transcript.includes(keywords[i])) {
                 switch (keywords[i]) {
-                    case 'tamaño 4':
-                        controltexto.classList.add("fs-1");
-                        controltexto.classList.add("fs-1");
-                        controltexto.style.color = "red";
-                        console.log("Se encontró la palabra 'tamaño 4'.");
-                        break;
                     case 'abrir una pestaña':
-                        window.open(); 
+                        abrirPestana();
                         console.log("Se detectó 'abrir una pestaña'.");
                         break;
                     case 'ir a una página':
-                        window.location.href = "https://chat.openai.com/"; 
+                        irAPagina();
                         console.log("Se detectó 'ir a una página'.");
                         break;
-                    
-                    case 'cerrar una pestaña':
-                        window.close(); 
-                        console.log("Se detectó 'cerrar una pestaña'.");
+                    case 'ir a youtube':
+                        irAYoutube();
+                        console.log("Se detectó 'ir a Youtube'.");
                         break;
-                
-                    case 'cerrar el navegador':
-                        window.close(); 
-                        console.log("Se detectó 'cerrar el navegador'.");
+                    case 'cerrar pestaña':
+                        cerrarPestana();
+                        console.log("Se detectó 'cerrar una Pestaña'.");
                         break;
+
                 }
             }
         }
 
-        
         enviarFraseAFirebase(transcript);
     };
 
@@ -58,45 +48,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
     recognition.onend = function () {
         listeningText.innerHTML = 'Fin de la escucha';
-        recognition.start(); // Reiniciar el reconocimiento después de que termine
+        setTimeout(function () {
+            recognition.start(); // Reinicia el reconocimiento después de un breve tiempo
+        }, 500); // Milisegundos de espera antes de reiniciar
     };
 
-    // Iniciar la escucha directamente cuando se cargue la página
     recognition.start();
 
-    
     function enviarFraseAFirebase(frase) {
-    
-        var data = {
-            frase: frase
-        };
+        if (frase.includes('abrir una pestaña') || frase.includes('ir a una página') || frase.includes('ir a youtube') || frase.includes('cerrar pestaña')) {
+            var data = {
+                frase: frase
+            };
 
-    
-        var options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        };
-
-        
-        var url = 'https://661215a995fdb62f24ee0845.mockapi.io/detector';
-
-    
-        fetch(url, options)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al enviar los datos a la API');
+            var options = {
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Los datos se enviaron correctamente:', data);
-                
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+            };
+
+            axios.post('https://661215a995fdb62f24ee0845.mockapi.io/detector', data, options)
+                .then(response => {
+                    console.log('Los datos se enviaron correctamente:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    }
+
+    function abrirPestana() {
+        window.open();
+    }
+
+    function irAPagina() {
+        window.location.href = "https://chat.openai.com/";
+    }
+
+    function irAYoutube() {
+        window.location.href = "https://youtube.com";
+    }
+
+    function cerrarPestana() {
+        window.close();
     }
 });
+
